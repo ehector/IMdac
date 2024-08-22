@@ -1,7 +1,7 @@
 Rcpp::sourceCpp("compute_funcs-20240816.cpp")
 
 #############################################################################
-## Generate data for Bernoulli example, create individual and optimal contours -- scalar theta, intercept only
+## Generate data for Bernoulli example, create individual and optimal contours 
 #############################################################################
 
 expit <- function(z) exp(z)/(1+exp(z))
