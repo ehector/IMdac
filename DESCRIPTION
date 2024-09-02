@@ -1,0 +1,14 @@
+Package: IMeta
+Type: Package
+Title: Possibilistic meta-analysis with finite-sample validity guarantees
+Version: 1.0-1
+Date: 2024-09-02
+Author: Emily C. Hector
+Maintainer: [Emily C. Hector] <ehector@ncsu.edu>
+Description: Performs meta-analysis in the inferential models framework. Estimate a possibility contour quantifying uncertainty of the meta-analysis estimator.
+License: GPL-3
+Imports: Rcpp (>= 0.12.11),
+         Matrix (>= 1.2.11),
+         stats
+LinkingTo: Rcpp, RcppArmadillo
+SystemRequirements: GNU make
