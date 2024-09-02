@@ -481,6 +481,50 @@ arma::vec poisson_pl_mid_exact(arma::mat const& theta, arma::mat const& theta_ML
 }
 
 // [[Rcpp::export]]
+arma::vec lognormal_pl_mid_P(arma::mat const& theta, arma::mat const& theta_dag, arma::mat const& theta_MLE, int const& k, 
+                                 arma::field<arma::mat> const& J_ni, arma::vec const& n_i, int const& M){
+  double T = theta.n_rows;
+  double D = theta_dag.n_rows;
+  arma::mat distance = zeros<mat>(T,D);
+  arma::mat wl_sim = zeros<mat>(D,M);
+  arma::vec pl = zeros<vec>(T);
+  
+  for(int d=0; d<D; d++){
+    for(int t=0; t<T; t++){
+      distance(t,d) = pow(arma::as_scalar( theta.row(t) * theta_dag.row(d).t() ), 0.5);
+    }
+    
+    for(int sim=0; sim<M; sim++){
+      arma::mat theta_MLE_sim = zeros<mat>(k,2);
+      arma::field<arma::mat> J_ni_sim(k);
+      for(int i=0; i<k; i++){
+        arma::vec Ysim_i = zeros<vec>(n_i(i));
+        
+        for(int j=0; j<n_i(i); j++){
+          Ysim_i(j) = R::rlnorm(theta_dag(d,0), pow(theta_dag(d,1), 0.5)); 
+        }
+        
+        theta_MLE_sim(i,0) = mean(log(Ysim_i));
+        theta_MLE_sim(i,1) = mean(pow(log(Ysim_i) - theta_MLE_sim(i,0), 2.0));
+        J_ni_sim(i) = lognormal_FI(Ysim_i, n_i(i), theta_MLE_sim.row(i).t()); 
+      }
+      wl_sim(d,sim) = lognormal_work_likeli(theta_dag.row(d).t(), theta_MLE_sim, J_ni_sim, k);
+    }
+  }
+  
+  for(int l=0; l<T; l++){
+    double wl_obs = lognormal_work_likeli(theta.row(l).t(), theta_MLE, J_ni, k);
+    int closest = distance.row(l).index_min();
+    arma::vec res = zeros<vec>(M);
+    for(int sim=0; sim<M; sim++){
+      if(wl_sim(closest,sim) <= wl_obs) res(sim) = 1;
+    }
+    pl(l) = mean(res);
+  }
+  return(pl);
+}
+
+// [[Rcpp::export]]
 arma::vec logistic_pl_mid_P(arma::mat const& theta, arma::mat const& theta_dag, arma::mat const& theta_MLE, int const& k, 
                              arma::field<arma::mat> const& J_ni, arma::vec const& n_i, 
                              arma::field<arma::mat> const& covariates, int const& M){
@@ -591,7 +635,7 @@ arma::vec poisson_pl_mid_P(arma::mat const& theta, arma::mat const& theta_dag, a
     }
     
     for(int sim=0; sim<M; sim++){
-      arma::mat theta_MLE_sim = zeros<mat>(k,2);
+      arma::mat theta_MLE_sim = zeros<mat>(k,p);
       arma::field<arma::mat> J_ni_sim(k);
       for(int i=0; i<k; i++){
         arma::vec Ysim_i = zeros<vec>(n_i(i));
@@ -612,7 +656,16 @@ arma::vec poisson_pl_mid_P(arma::mat const& theta, arma::mat const& theta_dag, a
           mu = arma::exp(eta);
           z = eta + (Ysim_i - mu) / mu;
           C2 = Q(i).t() * (Q(i).each_col() % mu);
-          C = arma::chol(C2);
+          if(!C2.is_symmetric(1e-16)) {
+            eta = zeros<vec>(n_i(i));
+            break;
+          }
+          try {
+            C = arma::chol(C2); 
+          } catch(std::runtime_error & e){
+            eta = zeros<vec>(n_i(i));
+            break;
+          }
           s1 = arma::solve(arma::trimatl(C.t()), Q(i).t() * (mu % z));
           s = arma::solve(arma::trimatu(C), s1);
           eta = Q(i) * s;
@@ -644,103 +697,103 @@ arma::vec poisson_pl_mid_P(arma::mat const& theta, arma::mat const& theta_dag, a
   return(pl);
 }
 
-// [[Rcpp::export]]
-arma::vec logistic_pl_mid_IS(arma::mat const& theta, arma::mat const& theta_dag, arma::mat const& theta_MLE, int const& k, 
-                                arma::field<arma::mat> const& J_ni, arma::vec const& n_i, 
-                                arma::field<arma::mat> const& covariates, int const& M){
-  int p = theta.n_cols;
-  double T = theta.n_rows;
-  double D = theta_dag.n_rows;
-  arma::vec pl = zeros<vec>(T);
-  
-  arma::field<arma::mat> mu_dag(k), Ysim(k), Q(k), R(k);
-  for(int i=0; i<k; i++){
-    arma::mat Xtheta_dag = covariates(i) * theta_dag.t();
-    mu_dag(i) = exp(Xtheta_dag)/(1+exp(Xtheta_dag)); 
-    
-    arma::qr_econ(Q(i), R(i), covariates(i));
-    
-    arma::mat Ysim_i = zeros<mat>(n_i(i)*M,D);
-    for(int d=0; d<D; d++){
-      for(int sim=0; sim<M; sim++){
-        for(int j=0; j<n_i(i); j++){
-          Ysim_i(sim*n_i(i)+j,d) = R::rbinom(1, mu_dag(i)(j,d));  
-        }
-      }
-    }
-    Ysim(i) = Ysim_i;
-  }
-  
-  arma::mat distance = zeros<mat>(T,D);
-  for(int d=0; d<D; d++){
-    for(int t=0; t<T; t++){
-      distance(t,d) = pow(arma::as_scalar( theta.row(t) * theta_dag.row(d).t() ), 0.5);
-    }
-  }
-  
-  for(int l=0; l<T; l++){
-    double wl_obs = logistic_work_likeli(theta.row(l).t(), theta_MLE, J_ni, p, k);
-    
-    int closest = distance.row(l).index_min();
-    arma::field<arma::vec> mu(k);
-    for(int i=0; i<k; i++){
-      arma::vec Xtheta = covariates(i) * theta.row(l).t();
-      mu(i) = exp(Xtheta)/(1+exp(Xtheta)); 
-    }
-    
-    arma::vec res = zeros<vec>(M);
-    for(int sim=0; sim<M; sim++){
-      double eweights = 0;
-      arma::mat theta_MLE_sim = zeros<mat>(k,2);
-      arma::field<arma::mat> J_ni_sim(k);
-      for(int i=0; i<k; i++){
-        arma::vec Ysim_i = Ysim(i)(span(sim*n_i(i), (sim+1)*n_i(i)-1), closest);
-        eweights = eweights + logdbinom(Ysim_i, mu(i)) - logdbinom(Ysim_i, mu_dag(i).col(closest));
-        
-        // GLM optimization modified from package here: github.com/dirkschumacher/rcppglm
-        arma::mat C, C2;
-        arma::colvec s = arma::zeros<arma::colvec>(p);
-        arma::colvec s1, s_old, mu, mu_p, z, W;
-        arma::colvec eta = covariates(i) * theta.row(l).t();
-        bool is_converged, error;
-        error = false;
-        
-        for (int it = 0; it < 10000; it++) {
-          s_old = s;
-          mu = (arma::exp(eta) / (1.0 + arma::exp(eta)));
-          mu_p = arma::exp(eta) / arma::square(arma::exp(eta) + 1.0);
-          z = eta + (Ysim_i - mu) / mu_p;
-          W = arma::square(mu_p) / (mu % (1.0 - mu));
-          C2 = Q(i).t() * (Q(i).each_col() % W);
-          if(C2.is_symmetric(1e-16)){
-            C = arma::chol(C2);
-            s1 = arma::solve(arma::trimatl(C.t()), Q(i).t() * (W % z));
-            s = arma::solve(arma::trimatu(C), s1);
-            eta = Q(i) * s;
-            is_converged = std::sqrt(arma::accu(arma::square(s - s_old))) < 0.000001;
-          } else{
-            eta = zeros<vec>(n_i(i));
-            error = true;
-          }
-          if (is_converged || error) break;
-        }
-        
-        arma::vec theta_MLE_sim_i = arma::solve(arma::trimatu(R(i)), Q(i).t() * eta);
-        theta_MLE_sim.row(i) = theta_MLE_sim_i.t();
-        J_ni_sim(i) = zeros<mat>(p,p);
-        for(int j=0; j<n_i(i); j++){
-          double mu_ij = arma::as_scalar(exp(covariates(i).row(j)*theta_MLE_sim_i));
-          J_ni_sim(i) = J_ni_sim(i) + covariates(i).row(j).t()*covariates(i).row(j) * mu_ij / pow(1+mu_ij, 2.0);
-        }
-      }
-      double wl_sim = logistic_work_likeli(theta.row(l).t(), theta_MLE_sim, J_ni_sim, p, k);
-      // if(wl_sim <= wl_obs) res(sim) = 1;
-      if(wl_sim <= wl_obs) res(sim) = exp(eweights);
-    }
-    pl(l) = mean(res);
-  }
-  return(pl);
-}
+// // [[Rcpp::export]]
+// arma::vec logistic_pl_mid_IS(arma::mat const& theta, arma::mat const& theta_dag, arma::mat const& theta_MLE, int const& k, 
+//                                 arma::field<arma::mat> const& J_ni, arma::vec const& n_i, 
+//                                 arma::field<arma::mat> const& covariates, int const& M){
+//   int p = theta.n_cols;
+//   double T = theta.n_rows;
+//   double D = theta_dag.n_rows;
+//   arma::vec pl = zeros<vec>(T);
+//   
+//   arma::field<arma::mat> mu_dag(k), Ysim(k), Q(k), R(k);
+//   for(int i=0; i<k; i++){
+//     arma::mat Xtheta_dag = covariates(i) * theta_dag.t();
+//     mu_dag(i) = exp(Xtheta_dag)/(1+exp(Xtheta_dag)); 
+//     
+//     arma::qr_econ(Q(i), R(i), covariates(i));
+//     
+//     arma::mat Ysim_i = zeros<mat>(n_i(i)*M,D);
+//     for(int d=0; d<D; d++){
+//       for(int sim=0; sim<M; sim++){
+//         for(int j=0; j<n_i(i); j++){
+//           Ysim_i(sim*n_i(i)+j,d) = R::rbinom(1, mu_dag(i)(j,d));  
+//         }
+//       }
+//     }
+//     Ysim(i) = Ysim_i;
+//   }
+//   
+//   arma::mat distance = zeros<mat>(T,D);
+//   for(int d=0; d<D; d++){
+//     for(int t=0; t<T; t++){
+//       distance(t,d) = pow(arma::as_scalar( theta.row(t) * theta_dag.row(d).t() ), 0.5);
+//     }
+//   }
+//   
+//   for(int l=0; l<T; l++){
+//     double wl_obs = logistic_work_likeli(theta.row(l).t(), theta_MLE, J_ni, p, k);
+//     
+//     int closest = distance.row(l).index_min();
+//     arma::field<arma::vec> mu(k);
+//     for(int i=0; i<k; i++){
+//       arma::vec Xtheta = covariates(i) * theta.row(l).t();
+//       mu(i) = exp(Xtheta)/(1+exp(Xtheta)); 
+//     }
+//     
+//     arma::vec res = zeros<vec>(M);
+//     for(int sim=0; sim<M; sim++){
+//       double eweights = 0;
+//       arma::mat theta_MLE_sim = zeros<mat>(k,2);
+//       arma::field<arma::mat> J_ni_sim(k);
+//       for(int i=0; i<k; i++){
+//         arma::vec Ysim_i = Ysim(i)(span(sim*n_i(i), (sim+1)*n_i(i)-1), closest);
+//         eweights = eweights + logdbinom(Ysim_i, mu(i)) - logdbinom(Ysim_i, mu_dag(i).col(closest));
+//         
+//         // GLM optimization modified from package here: github.com/dirkschumacher/rcppglm
+//         arma::mat C, C2;
+//         arma::colvec s = arma::zeros<arma::colvec>(p);
+//         arma::colvec s1, s_old, mu, mu_p, z, W;
+//         arma::colvec eta = covariates(i) * theta.row(l).t();
+//         bool is_converged, error;
+//         error = false;
+//         
+//         for (int it = 0; it < 10000; it++) {
+//           s_old = s;
+//           mu = (arma::exp(eta) / (1.0 + arma::exp(eta)));
+//           mu_p = arma::exp(eta) / arma::square(arma::exp(eta) + 1.0);
+//           z = eta + (Ysim_i - mu) / mu_p;
+//           W = arma::square(mu_p) / (mu % (1.0 - mu));
+//           C2 = Q(i).t() * (Q(i).each_col() % W);
+//           if(C2.is_symmetric(1e-16)){
+//             C = arma::chol(C2);
+//             s1 = arma::solve(arma::trimatl(C.t()), Q(i).t() * (W % z));
+//             s = arma::solve(arma::trimatu(C), s1);
+//             eta = Q(i) * s;
+//             is_converged = std::sqrt(arma::accu(arma::square(s - s_old))) < 0.000001;
+//           } else{
+//             eta = zeros<vec>(n_i(i));
+//             error = true;
+//           }
+//           if (is_converged || error) break;
+//         }
+//         
+//         arma::vec theta_MLE_sim_i = arma::solve(arma::trimatu(R(i)), Q(i).t() * eta);
+//         theta_MLE_sim.row(i) = theta_MLE_sim_i.t();
+//         J_ni_sim(i) = zeros<mat>(p,p);
+//         for(int j=0; j<n_i(i); j++){
+//           double mu_ij = arma::as_scalar(exp(covariates(i).row(j)*theta_MLE_sim_i));
+//           J_ni_sim(i) = J_ni_sim(i) + covariates(i).row(j).t()*covariates(i).row(j) * mu_ij / pow(1+mu_ij, 2.0);
+//         }
+//       }
+//       double wl_sim = logistic_work_likeli(theta.row(l).t(), theta_MLE_sim, J_ni_sim, p, k);
+//       // if(wl_sim <= wl_obs) res(sim) = 1;
+//       if(wl_sim <= wl_obs) res(sim) = exp(eweights);
+//     }
+//     pl(l) = mean(res);
+//   }
+//   return(pl);
+// }
 
 // [[Rcpp::export]]
 arma::vec poisson_pl_mid_IS(arma::mat const& theta, arma::mat const& theta_dag, arma::mat const& theta_MLE, int const& k, 
