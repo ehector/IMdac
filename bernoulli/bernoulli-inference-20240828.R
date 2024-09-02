@@ -51,14 +51,14 @@ theta_vec <- rbind(theta, theta_vec)
 #############################################################################
 
 # function for naive IM
-pl.naive <- function(theta, theta_MLE, J_ni){
+pl.naive <- function(theta, theta_MLE, J_ni, p){
   s.J <- Reduce("+",J_ni)
   theta.n <- solve(s.J) %*% Reduce("+", lapply(1:length(J_ni), function(i) J_ni[[i]]%*%theta_MLE[i,]) )
-  apply(theta, 1, function(t) drop(1 - pchisq( t(theta.n -t) %*% s.J %*% (theta.n -t), 1)))
+  apply(theta, 1, function(t) drop(1 - pchisq( t(theta.n -t) %*% s.J %*% (theta.n -t), p)))
 }
 
 # Plotting the naive IM
-naive_IM <- pl.naive(theta=theta_vec, theta_MLE=theta_MLE, J_ni=J_ni)
+naive_IM <- pl.naive(theta=theta_vec, theta_MLE=theta_MLE, J_ni=J_ni, p=p)
 
 #############################################################################
 ## Compute the proposed middle ground IM with importance weights -- vector theta
