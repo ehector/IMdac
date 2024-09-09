@@ -28,4 +28,6 @@ If you use the IMeta R package, please consider citing the relevant manuscript: 
 
 G.V. Glass. (1976). Primary, secondary, and meta-analysis of research. Educational Researcher, 5(10):3–8.
 
+E.C. Hector, L. Tang, L. Zhou, and P.X.-K. Song (2024). Handbook on Bayesian, Fiducial and Frequentist Inference, Chapter "Data integration and fusion in the Bayesian and Frequentist frameworks." Chapman and Hall/CRC Press.
+
 R. Martin and C. Liu. (2015). Inferential models: reasoning with uncertainty. CRC Press.
