@@ -117,8 +117,7 @@ naive_IM <- pl.naive(theta=theta_vec, theta_MLE=theta_MLE, J_ni=J_ni, p=p)
 
 ## Compute the equilibrated possibility contour
 theta_dag <- matrix(meta_estimate, nrow=1)
-middle_IM <- logistic_pl_mid_P(theta=theta_vec, theta_dag=theta_dag, theta_MLE=theta_MLE, k=k, J_ni=J_ni, n_i,
-                             covariates=covariates, M=50000)
+middle_IM <- logistic_pl_mid_P(theta=theta_vec, theta_dag=theta_dag, theta_MLE=theta_MLE, k=k, J_ni=J_ni, n_i, M=50000)
 
 ########### Count regression example ########### 
 
@@ -146,18 +145,18 @@ for(i in 1:k){
 ## Set the range of values for theta
 s.J <- Reduce("+",J_ni)
 meta_estimate <- drop(solve(s.J) \%*\% Reduce("+", lapply(1:length(J_ni), function(i) J_ni[[i]]\%*\%theta_MLE[i,]) ))
-theta_vec <- as.matrix(expand.grid(
-  seq(meta_estimate[1]-4*sqrt(diag(solve(s.J)))[1], meta_estimate[1]+4*sqrt(diag(solve(s.J)))[1],length=100), 
-  seq(meta_estimate[2]-4*sqrt(diag(solve(s.J)))[2], meta_estimate[2]+4*sqrt(diag(solve(s.J)))[2],length=100),
-  seq(meta_estimate[3]-4*sqrt(diag(solve(s.J)))[3], meta_estimate[3]+4*sqrt(diag(solve(s.J)))[3],length=100)) )
 
-## Compute the meta-analysis possibility contour
-naive_IM <- pl.naive(theta=theta_vec, theta_MLE=theta_MLE, J_ni=J_ni, p=p)
-
-## Compute the equilibrated possibility contour
-theta_dag <- matrix(meta_estimate, nrow=1)
-
-middle_IM <- poisson_pl_mid_P(theta=theta_vec, theta_dag=theta_dag, theta_MLE=theta_MLE, k=k, J_ni=J_ni, n_i, covariates=covariates, M=50000)
-
+theta_length <- 10000
+naive_IM <- middle_IM <- matrix(0, theta_length, p)
+for(q in 1:p){
+  print(paste0("q=",q))
+  theta_q_vec <- seq(meta_estimate[q]-0.4,meta_estimate[q]+0.4, length=theta_length)
+  
+  ## Compute the meta-analysis possibility contour
+  naive_IM[,q] <- sapply(theta_q_vec, function(t) drop(1 - pchisq( s.J[q,q]*(meta_estimate[q]-t)^2, 1)) )
+  
+  ## Compute the equilibrated possibility contour
+  middle_IM[,q] <- poisson_pl_mid_profile_P(theta_q_vec, matrix(meta_estimate,nrow=1), meta_estimate[q], k, s.J[q,q], n_i, q, M=50000)
+}
 
 }
