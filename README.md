@@ -3,8 +3,8 @@ Possibilistic meta-analysis with finite-sample validity guarantees
 
 This is a repository for the R package to perform possibilistic meta-analysis in the inferential models framework. The R package's main files are:
 
-- src/compute_funcs-20240828.cpp: this file defines the Rcpp functions that compute the possibility contours for the individual, optimal, meta-analysis and equilibrated possibility contours.
-- R/meta_analysis_funcs-20240902.R: this file defines the function for the meta-analysis possibility contour and helper functions.
+- src/compute_funcs.cpp: this file defines the Rcpp functions that compute the possibility contours for the individual, optimal, meta-analysis and equilibrated possibility contours.
+- R/meta_analysis_funcs.R: this file defines the function for the meta-analysis possibility contour and helper functions.
 
 The IMeta man file contains a examples for running the regression models from the paper.
 
