@@ -1,38 +1,38 @@
-\name{IMeta-package}
-\alias{IMeta-package}
-\alias{IMeta}
+\name{IMdac-package}
+\alias{IMdac-package}
+\alias{IMdac}
 \docType{package}
-\title{\packageTitle{IMeta}}
-\description{\packageDescription{IMeta}}
+\title{\packageTitle{IMdac}}
+\description{\packageDescription{IMdac}}
 \details{
-  The DESCRIPTION file: \packageDESCRIPTION{IMeta}
-  \packageIndices{IMeta}
+  The DESCRIPTION file: \packageDESCRIPTION{IMdac}
+  \packageIndices{IMdac}
 
-  This is a repository for the R package to perform possibilistic meta-analysis in the inferential models framework. The R package's main files are:
+  This is a repository for the R package to perform possibilistic divide-and-conquer analysis in the inferential models framework. The R package's main files are:
 
-- src/compute_funcs-20240828.cpp: this file defines the Rcpp functions that compute the possibility contours for the individual, optimal, meta-analysis and equilibrated possibility contours.
+- src/compute_funcs-20240828.cpp: this file defines the Rcpp functions that compute the possibility contours for the individual, optimal, divide-and-conquer analysis and equilibrated possibility contours.
 
-- R/meta_analysis_funcs-20240902.R: this file defines the function for the meta-analysis possibility contour and helper functions.
+- R/dac_analysis_funcs-20240902.R: this file defines the function for the divide-and-conquer analysis possibility contour and helper functions.
 }
 \author{
-  \packageAuthor{IMeta}
+  \packageAuthor{IMdac}
   
-  Maintainer: \packageMaintainer{IMeta}
+  Maintainer: \packageMaintainer{IMdac}
 }
 \references{
   # Installation
 
-The IMeta R package can be installed in one of two ways:
+The IMdac R package can be installed in one of two ways:
 
-- from the downloaded gzipped tarball as R CMD INSTALL IMeta_1.0-1.tar.gz
+- from the downloaded gzipped tarball as R CMD INSTALL IMdac_1.0-1.tar.gz
 
-- from the downloaded and renamed IMeta folder as R CMD build IMeta and R CMD INSTALL IMeta_1.0-1.tar.gz
+- from the downloaded and renamed IMdac folder as R CMD build IMdac and R CMD INSTALL IMdac_1.0-1.tar.gz
 
 Please make sure to have all packages listed in the DESCRIPTION file already installed. If you encounter a library not found error for lgfortran, please try installing gfortran from here: https://cran.r-project.org/bin/macosx/tools/.
 
 # Citation
 
-If you use the IMeta R package, please consider citing the relevant manuscript: E.C. Hector, L. Cella and R. Martin (2024+). Efficient possibilistic meta-analysis with finite-sample validity guarantees.
+If you use the IMdac R package, please consider citing the relevant manuscript: E.C. Hector, L. Cella and R. Martin (2024+). 
 
 # References
 
@@ -71,10 +71,10 @@ theta_vec <- as.matrix(expand.grid(
   seq(meta_estimate[1]-5*sqrt(diag(solve(s.J)))[1], meta_estimate[1]+5*sqrt(diag(solve(s.J)))[1],length=400), 
   seq(meta_estimate[2]-5*sqrt(diag(solve(s.J)))[2], meta_estimate[2]+5*sqrt(diag(solve(s.J)))[2],length=400)) )
   
-## Compute the meta-analysis possibility contour
+## Compute the divide-and-conquer analysis possibility contour
 naive_IM <- pl.naive(theta=theta_vec, theta_MLE=theta_MLE, J_ni=J_ni, p=p)
 
-## Compute the equilibrated possibility contour
+## Compute the validified possibility contour
 theta_dag <- as.matrix(expand.grid(
   c(meta_estimate[1] - 1*sqrt(diag(solve(s.J)))[1], meta_estimate[1], meta_estimate[1] + 1*sqrt(diag(solve(s.J)))[1]),
   c(meta_estimate[2] - 1*sqrt(diag(solve(s.J)))[2], meta_estimate[2], meta_estimate[2] + 1*sqrt(diag(solve(s.J)))[2])
@@ -112,10 +112,10 @@ theta_vec <- as.matrix(expand.grid(
   seq(meta_estimate[1]-2*sqrt(diag(solve(s.J)))[1], meta_estimate[1]+2*sqrt(diag(solve(s.J)))[1],length=150), 
   seq(meta_estimate[2]-2*sqrt(diag(solve(s.J)))[2], meta_estimate[2]+2*sqrt(diag(solve(s.J)))[2],length=150)) )
 
-## Compute the meta-analysis possibility contour
+## Compute the divide-and-conquer analysis possibility contour
 naive_IM <- pl.naive(theta=theta_vec, theta_MLE=theta_MLE, J_ni=J_ni, p=p)
 
-## Compute the equilibrated possibility contour
+## Compute the validified possibility contour
 theta_dag <- matrix(meta_estimate, nrow=1)
 middle_IM <- logistic_pl_mid_P(theta=theta_vec, theta_dag=theta_dag, theta_MLE=theta_MLE, k=k, J_ni=J_ni, n_i, M=50000)
 
@@ -152,10 +152,10 @@ for(q in 1:p){
   print(paste0("q=",q))
   theta_q_vec <- seq(meta_estimate[q]-0.4,meta_estimate[q]+0.4, length=theta_length)
   
-  ## Compute the meta-analysis possibility contour
+  ## Compute the divide-and-conquer analysis possibility contour
   naive_IM[,q] <- sapply(theta_q_vec, function(t) drop(1 - pchisq( s.J[q,q]*(meta_estimate[q]-t)^2, 1)) )
   
-  ## Compute the equilibrated possibility contour
+  ## Compute the validified possibility contour
   middle_IM[,q] <- poisson_pl_mid_profile_P(theta_q_vec, matrix(meta_estimate,nrow=1), meta_estimate[q], k, s.J[q,q], n_i, q, M=50000)
 }
 
