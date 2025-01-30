@@ -1,4 +1,4 @@
-useDynLib(IMeta, .registration=TRUE)
+useDynLib(IMdac, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 importFrom(stats, "coef", "cov", "is.empty.model", "model.matrix",
              "model.response", "optim", "pchisq", "pnorm",
