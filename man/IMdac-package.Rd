@@ -8,7 +8,7 @@
   The DESCRIPTION file: \packageDESCRIPTION{IMdac}
   \packageIndices{IMdac}
 
-  This is a repository for the R package to perform possibilistic divide-and-conquer analysis in the inferential models framework. The R package's main file is the R/dac_funcs-20250221.R file. It defines the function for the divide-and-conquer possibility contour and helper functions.
+  This is a repository for the R package to perform possibilistic divide-and-conquer analysis in the inferential models framework. The R package's main file is the R/dac_funcs-20250221.R file. It defines the function for the divide-and-conquer possibility contour and helper functions. The examples folder contains the code to reproduce the alpha-stable and g-and-k examples. Due to the use of Bayesflow, some set-up of Python is needed that is system specific. Instructions are available in the comments at the top of the two scripts: "alpha-stable.R" and "g-and-k.R".
 }
 \author{
   \packageAuthor{IMdac}
