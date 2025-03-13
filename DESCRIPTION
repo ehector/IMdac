@@ -1,11 +1,11 @@
 Package: IMdac
 Type: Package
-Title: Possibilistic divide-and-conquer analysis with finite-sample validity guarantees
+Title: Possibilistic divide-and-conquer with finite-sample validity guarantees
 Version: 1.0-1
 Date: 2024-09-02
 Author: Emily C. Hector
 Maintainer: [Emily C. Hector] <ehector@ncsu.edu>
-Description: Performs divide-and-conquer analysis in the inferential models framework. Estimate a possibility contour quantifying uncertainty of the divide-and-conquer analysis estimator.
+Description: Performs divide-and-conquer in the inferential models framework. Estimate a possibility contour quantifying uncertainty of the divide-and-conquer estimator.
 License: GPL-3
 Imports: Rcpp (>= 0.12.11),
          Matrix (>= 1.2.11),

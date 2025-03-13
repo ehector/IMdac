@@ -8,11 +8,7 @@
   The DESCRIPTION file: \packageDESCRIPTION{IMdac}
   \packageIndices{IMdac}
 
-  This is a repository for the R package to perform possibilistic divide-and-conquer analysis in the inferential models framework. The R package's main files are:
-
-- src/compute_funcs-20240828.cpp: this file defines the Rcpp functions that compute the possibility contours for the individual, optimal, divide-and-conquer analysis and equilibrated possibility contours.
-
-- R/dac_analysis_funcs-20240902.R: this file defines the function for the divide-and-conquer analysis possibility contour and helper functions.
+  This is a repository for the R package to perform possibilistic divide-and-conquer analysis in the inferential models framework. The R package's main file is the R/dac_funcs-20250221.R file. It defines the function for the divide-and-conquer possibility contour and helper functions.
 }
 \author{
   \packageAuthor{IMdac}
@@ -32,11 +28,11 @@ Please make sure to have all packages listed in the DESCRIPTION file already ins
 
 # Citation
 
-If you use the IMdac R package, please consider citing the relevant manuscript: E.C. Hector, L. Cella and R. Martin (2024+). 
+If you use the IMdac R package, please consider citing the relevant manuscript: E.C. Hector, L. Cella and R. Martin (2025+). Divide-and-conquer with finite sample sizes: valid and efficient possibilistic inference.
 
 # References
 
-G.V. Glass. (1976). Primary, secondary, and meta-analysis of research. Educational Researcher, 5(10):3–8.
+Hector, E. C., Tang, L., Zhou, L., and Song, P. X.-K. (2024). Handbook on Bayesian, Fiducial and Frequentist Inference, chapter Data integration and fusion in the Bayesian and Frequentist frameworks. Chapman and Hall/CRC Press.
 
 R. Martin and C. Liu. (2015). Inferential models: reasoning with uncertainty. CRC Press.
 }
@@ -46,117 +42,96 @@ R. Martin and C. Liu. (2015). Inferential models: reasoning with uncertainty. CR
 \seealso{
 }
 \examples{
-########### Lognormal example ########### 
+###############################################################################
+## Exponential example
+###############################################################################
 
-## Set parameters
-n_i <- c(12,14,10,11,13)
-k <- length(n_i)
-mu <- 1
-gamma <- 1.5
-theta <- c(mu, gamma)
-p <- length(theta)
-
-## Generate the data
 set.seed(600)
-Y <- lapply(1:k, function(i) rlnorm(n=n_i[i], meanlog=mu, sdlog=sqrt(gamma)) )
-
-## Compute the MLE's and the observed Fisher information
-theta_MLE <- t(sapply(1:k, function(i) lognormal_MLE(Y[[i]]) ))
-J_ni <- lapply(1:k, function(i) lognormal_FI(Y[[i]], n_i[i], theta_MLE[i,]))
-
-## Set the range of values for theta
-s.J <- Reduce("+",J_ni)
-meta_estimate <- drop(solve(s.J) \%*\% Reduce("+", lapply(1:length(J_ni), function(i) J_ni[[i]]\%*\%theta_MLE[i,]) ))
-theta_vec <- as.matrix(expand.grid(
-  seq(meta_estimate[1]-5*sqrt(diag(solve(s.J)))[1], meta_estimate[1]+5*sqrt(diag(solve(s.J)))[1],length=400), 
-  seq(meta_estimate[2]-5*sqrt(diag(solve(s.J)))[2], meta_estimate[2]+5*sqrt(diag(solve(s.J)))[2],length=400)) )
-  
-## Compute the divide-and-conquer analysis possibility contour
-naive_IM <- pl.naive(theta=theta_vec, theta_MLE=theta_MLE, J_ni=J_ni, p=p)
-
-## Compute the validified possibility contour
-theta_dag <- as.matrix(expand.grid(
-  c(meta_estimate[1] - 1*sqrt(diag(solve(s.J)))[1], meta_estimate[1], meta_estimate[1] + 1*sqrt(diag(solve(s.J)))[1]),
-  c(meta_estimate[2] - 1*sqrt(diag(solve(s.J)))[2], meta_estimate[2], meta_estimate[2] + 1*sqrt(diag(solve(s.J)))[2])
-))
-middle_IM <- lognormal_pl_mid_P(theta=theta_vec, theta_dag=theta_dag, theta_MLE=theta_MLE, k=k, J_ni=J_ni, n_i=n_i, M=50000)
-
-########### Logistic regression example ########### 
-
-## Set parameters
+## the true value of the uncertain Theta
 theta <- 0.5
+
+## the number of blocks
 k <- 3
-n_i <- c(50,75,100)
-theta <- c(-0.5,0.3)
-p <- length(theta)
 
-## Generate the data
-set.seed(600)
-covariates <- lapply(1:k, function(i) cbind(1, rnorm(n_i[i],0,1)) )
-Y <- sapply(1:k, function(i) rbinom(n=n_i[i], size=1, prob=expit(covariates[[i]]\%*\%theta)) )
+## the size of each block
+n_i <- c(5,10,15)
 
-## Compute the MLE's and the observed Fisher information
-theta_MLE <- matrix(0,k,p)
-J_ni <- list()
-for(i in 1:k){
-  glm_i <- glm(Y[[i]] ~ 0 + covariates[[i]], family="binomial")
-  theta_MLE[i,] <- as.vector(coef(glm_i))
-  mu_i <- expit(covariates[[i]]%*%theta_MLE[i,])
-  J_ni[[i]] <- Reduce("+", lapply(1:n_i[i], function(j) covariates[[i]][j,] \%o\% covariates[[i]][j,] * mu_i[j]*(1-mu_i[j])))
+## the data in each block
+Y <- sapply(1:k, function(i) rgamma(1, n_i[i], rate=theta) )
+
+## the MLE in each block
+theta_MLE <- n_i/Y
+
+## the observed Fisher information in each block
+J_ni <- n_i/theta_MLE^2
+
+## range of values for theta
+theta_vec <- seq(0,2,0.01)
+
+## compute the large-n estimator
+s.J <- sum(J_ni)
+large_n_estimate <- sum(J_ni*theta_MLE) / s.J
+
+## Function for the exact IM contours
+gamma_individual_IM <- function(theta, Y, n){
+  z <- (theta*Y)^n * exp(-theta*Y)
+  expint::gammainc(n, -n*lamW::lambertWm1(-z^(1/n)/n))/factorial(n-1) -
+    expint::gammainc(n, -n*lamW::lambertW0(-z^(1/n)/n))/factorial(n-1) + 1
 }
 
-## Set the range of values for theta
-s.J <- Reduce("+",J_ni)
-meta_estimate <- drop(solve(s.J) \%*\% Reduce("+", lapply(1:length(J_ni), function(i) J_ni[[i]]\%*\%theta_MLE[i,]) ))
-theta_vec <- as.matrix(expand.grid(
-  seq(meta_estimate[1]-2*sqrt(diag(solve(s.J)))[1], meta_estimate[1]+2*sqrt(diag(solve(s.J)))[1],length=150), 
-  seq(meta_estimate[2]-2*sqrt(diag(solve(s.J)))[2], meta_estimate[2]+2*sqrt(diag(solve(s.J)))[2],length=150)) )
+## the individual IM contours
+individual_IMs <- lapply(1:k, function(i) gamma_individual_IM(theta=theta_vec, Y=Y[i], n=n_i[i]) )
 
-## Compute the divide-and-conquer analysis possibility contour
-naive_IM <- pl.naive(theta=theta_vec, theta_MLE=theta_MLE, J_ni=J_ni, p=p)
+## the optimal IM contour
+optimal_IM <- gamma_individual_IM(theta=theta_vec, Y=sum(Y), n=sum(n_i))
 
-## Compute the validified possibility contour
+## the large-n contour
+naive_IM <- sapply(theta_vec, function(theta) {
+  1 - pchisq( ((large_n_estimate -theta)^2)* s.J , 1)
+  })
+
+## the valid divide-and-conquer contour
 theta_dag <- matrix(meta_estimate, nrow=1)
-middle_IM <- logistic_pl_mid_P(theta=theta_vec, theta_dag=theta_dag, theta_MLE=theta_MLE, k=k, J_ni=J_ni, n_i, M=50000)
+middle_IM <- exponential_pl_mid_P(theta=theta_vec, theta_dag=theta_dag, theta_MLE=theta_MLE, k=k, J_ni=J_ni, n_i, M=50000)
 
-########### Count regression example ########### 
+###############################################################################
+## Gaussian example
+###############################################################################
 
-## Set parameters
-k <- 3
-n_i <- c(15,20,25)
-theta <- c(-0.2,0.5,0.8)
-p <- length(theta)
-
-## Generate the data
 set.seed(600)
-covariates <- lapply(1:k, function(i) cbind(1, rnorm(n_i[i],0,1), rnorm(n_i[i],0,1)) )
-Y <- lapply(1:k, function(i) rpois(n=n_i[i], lambda=exp(covariates[[i]]\%*\%theta)) )
 
-## Compute the MLE's and the observed Fisher information
-theta_MLE <- matrix(0,k,p)
-J_ni <- list()
-for(i in 1:k){
-  glm_i <- glm(Y[[i]] ~ 0 + covariates[[i]], family="poisson")
-  theta_MLE[i,] <- as.vector(coef(glm_i))
-  mu_i <- exp(covariates[[i]]\%*\%theta_MLE[i,])
-  J_ni[[i]] <- Reduce("+", lapply(1:n_i[i], function(j) covariates[[i]][j,] \%o\% covariates[[i]][j,] * mu_i[j]))
+## the true value of the uncertain Theta
+theta <- 0
+
+## the number of blocks
+k <- 3
+
+## the size of each block
+n_i <- c(5,10,15)
+
+## the MLE and observed Fisher information in each block
+J_ni <- n_i/c(2,2,2)^2
+theta_MLE <- sapply(1:k, function(i) rnorm(1, mean=theta, sd=1/sqrt(J_ni[i])))
+
+## range of values for theta
+theta_vec <- seq(-2,2,0.01)
+
+## Function for the exact IM contours
+gaussian_individual_IM <- function(theta, theta_MLE, J_ni){
+  2*(1-pnorm(q=abs(theta_MLE-theta)*sqrt(J_ni)))
 }
 
-## Set the range of values for theta
-s.J <- Reduce("+",J_ni)
-meta_estimate <- drop(solve(s.J) \%*\% Reduce("+", lapply(1:length(J_ni), function(i) J_ni[[i]]\%*\%theta_MLE[i,]) ))
+## the individual IM contours
+individual_IMs <- lapply(1:k, function(i) gaussian_individual_IM(theta=theta_vec, theta_MLE=theta_MLE[i], J_ni=J_ni[i]) )
 
-theta_length <- 10000
-naive_IM <- middle_IM <- matrix(0, theta_length, p)
-for(q in 1:p){
-  print(paste0("q=",q))
-  theta_q_vec <- seq(meta_estimate[q]-0.4,meta_estimate[q]+0.4, length=theta_length)
-  
-  ## Compute the divide-and-conquer analysis possibility contour
-  naive_IM[,q] <- sapply(theta_q_vec, function(t) drop(1 - pchisq( s.J[q,q]*(meta_estimate[q]-t)^2, 1)) )
-  
-  ## Compute the validified possibility contour
-  middle_IM[,q] <- poisson_pl_mid_profile_P(theta_q_vec, matrix(meta_estimate,nrow=1), meta_estimate[q], k, s.J[q,q], n_i, q, M=50000)
-}
+## the optimal IM contour
+optimal_IM <- gaussian_individual_IM(theta=theta_vec, theta_MLE=sum(theta_MLE*J_ni)/sum(J_ni), J_ni=sum(J_ni))
 
+## the large-n contour
+naive_IM <- sapply(theta_vec, function(theta) {
+  1 - pchisq( ((large_n_estimate -theta)^2)* s.J , 1)
+  })
+
+## the valid divide-and-conquer contour
+middle_IM <- naive_IM
 }

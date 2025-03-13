@@ -11,164 +11,9 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// lognormal_MLE
-arma::vec lognormal_MLE(const arma::vec& Y);
-RcppExport SEXP _IMeta_lognormal_MLE(SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(lognormal_MLE(Y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// lognormal_FI
-arma::mat lognormal_FI(const arma::vec& Y, const double& n, const arma::vec& theta);
-RcppExport SEXP _IMeta_lognormal_FI(SEXP YSEXP, SEXP nSEXP, SEXP thetaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const double& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(lognormal_FI(Y, n, theta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pareto_QF
-double pareto_QF(double const& u, double const& theta);
-RcppExport SEXP _IMeta_pareto_QF(SEXP uSEXP, SEXP thetaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double const& >::type u(uSEXP);
-    Rcpp::traits::input_parameter< double const& >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(pareto_QF(u, theta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logdlnorm
-double logdlnorm(const arma::vec& Y, const double& n, const arma::vec& theta);
-RcppExport SEXP _IMeta_logdlnorm(SEXP YSEXP, SEXP nSEXP, SEXP thetaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const double& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(logdlnorm(Y, n, theta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logdbinom
-double logdbinom(const arma::vec& Y, const arma::vec& mu);
-RcppExport SEXP _IMeta_logdbinom(SEXP YSEXP, SEXP muSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type mu(muSEXP);
-    rcpp_result_gen = Rcpp::wrap(logdbinom(Y, mu));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logdpois
-double logdpois(const arma::vec& Y, const arma::vec& mu);
-RcppExport SEXP _IMeta_logdpois(SEXP YSEXP, SEXP muSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type mu(muSEXP);
-    rcpp_result_gen = Rcpp::wrap(logdpois(Y, mu));
-    return rcpp_result_gen;
-END_RCPP
-}
-// lognormal_individual_IM
-double lognormal_individual_IM(const arma::vec& Y, const double& n, const double& mu, const double& gamma, const arma::vec& theta_MLE);
-RcppExport SEXP _IMeta_lognormal_individual_IM(SEXP YSEXP, SEXP nSEXP, SEXP muSEXP, SEXP gammaSEXP, SEXP theta_MLESEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const double& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const double& >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< const double& >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type theta_MLE(theta_MLESEXP);
-    rcpp_result_gen = Rcpp::wrap(lognormal_individual_IM(Y, n, mu, gamma, theta_MLE));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pareto_individual_IM
-double pareto_individual_IM(const arma::vec& Y, const double& n, const double& theta);
-RcppExport SEXP _IMeta_pareto_individual_IM(SEXP YSEXP, SEXP nSEXP, SEXP thetaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const double& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const double& >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(pareto_individual_IM(Y, n, theta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logistic_individual_IM
-double logistic_individual_IM(const arma::vec& mu, const arma::vec& mu_MLE, const arma::vec& Y);
-RcppExport SEXP _IMeta_logistic_individual_IM(SEXP muSEXP, SEXP mu_MLESEXP, SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type mu_MLE(mu_MLESEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(logistic_individual_IM(mu, mu_MLE, Y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// poisson_individual_IM
-double poisson_individual_IM(const arma::vec& mu, const arma::vec& mu_MLE, const arma::vec& Y);
-RcppExport SEXP _IMeta_poisson_individual_IM(SEXP muSEXP, SEXP mu_MLESEXP, SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type mu_MLE(mu_MLESEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(poisson_individual_IM(mu, mu_MLE, Y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// valid_lognormal_individual_IM
-arma::vec valid_lognormal_individual_IM(const arma::mat& theta, const arma::vec& Y, const double& n, const double& M);
-RcppExport SEXP _IMeta_valid_lognormal_individual_IM(SEXP thetaSEXP, SEXP YSEXP, SEXP nSEXP, SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const double& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const double& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(valid_lognormal_individual_IM(theta, Y, n, M));
-    return rcpp_result_gen;
-END_RCPP
-}
-// valid_pareto_individual_IM
-arma::vec valid_pareto_individual_IM(const arma::vec& theta, arma::vec const& Y, const double& n, const double& M);
-RcppExport SEXP _IMeta_valid_pareto_individual_IM(SEXP thetaSEXP, SEXP YSEXP, SEXP nSEXP, SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< arma::vec const& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const double& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const double& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(valid_pareto_individual_IM(theta, Y, n, M));
-    return rcpp_result_gen;
-END_RCPP
-}
 // exponential_work_likeli
 double exponential_work_likeli(double const& theta, arma::vec const& theta_MLE, arma::vec const& J_ni, int const& k);
-RcppExport SEXP _IMeta_exponential_work_likeli(SEXP thetaSEXP, SEXP theta_MLESEXP, SEXP J_niSEXP, SEXP kSEXP) {
+RcppExport SEXP _IMdac_exponential_work_likeli(SEXP thetaSEXP, SEXP theta_MLESEXP, SEXP J_niSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -180,80 +25,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// lognormal_work_likeli
-double lognormal_work_likeli(arma::vec const& theta, arma::mat const& theta_MLE, arma::field<arma::mat> const& J_ni, int const& k);
-RcppExport SEXP _IMeta_lognormal_work_likeli(SEXP thetaSEXP, SEXP theta_MLESEXP, SEXP J_niSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec const& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta_MLE(theta_MLESEXP);
-    Rcpp::traits::input_parameter< arma::field<arma::mat> const& >::type J_ni(J_niSEXP);
-    Rcpp::traits::input_parameter< int const& >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(lognormal_work_likeli(theta, theta_MLE, J_ni, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pareto_work_likeli
-double pareto_work_likeli(double const& theta, const arma::vec& theta_MLE, arma::vec const& J_ni, int const& k);
-RcppExport SEXP _IMeta_pareto_work_likeli(SEXP thetaSEXP, SEXP theta_MLESEXP, SEXP J_niSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double const& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type theta_MLE(theta_MLESEXP);
-    Rcpp::traits::input_parameter< arma::vec const& >::type J_ni(J_niSEXP);
-    Rcpp::traits::input_parameter< int const& >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(pareto_work_likeli(theta, theta_MLE, J_ni, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logistic_work_likeli
-double logistic_work_likeli(arma::vec const& theta, arma::mat const& theta_MLE, arma::field<arma::mat> const& J_ni, int const& p, int const& k);
-RcppExport SEXP _IMeta_logistic_work_likeli(SEXP thetaSEXP, SEXP theta_MLESEXP, SEXP J_niSEXP, SEXP pSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec const& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta_MLE(theta_MLESEXP);
-    Rcpp::traits::input_parameter< arma::field<arma::mat> const& >::type J_ni(J_niSEXP);
-    Rcpp::traits::input_parameter< int const& >::type p(pSEXP);
-    Rcpp::traits::input_parameter< int const& >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(logistic_work_likeli(theta, theta_MLE, J_ni, p, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// poisson_work_likeli
-double poisson_work_likeli(arma::vec const& theta, arma::mat const& theta_MLE, arma::field<arma::mat> const& J_ni, int const& p, int const& k);
-RcppExport SEXP _IMeta_poisson_work_likeli(SEXP thetaSEXP, SEXP theta_MLESEXP, SEXP J_niSEXP, SEXP pSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec const& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta_MLE(theta_MLESEXP);
-    Rcpp::traits::input_parameter< arma::field<arma::mat> const& >::type J_ni(J_niSEXP);
-    Rcpp::traits::input_parameter< int const& >::type p(pSEXP);
-    Rcpp::traits::input_parameter< int const& >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(poisson_work_likeli(theta, theta_MLE, J_ni, p, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// poisson_profile_work_likeli
-double poisson_profile_work_likeli(double const& theta, double const& meta_estimate, double const& s_J);
-RcppExport SEXP _IMeta_poisson_profile_work_likeli(SEXP thetaSEXP, SEXP meta_estimateSEXP, SEXP s_JSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double const& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double const& >::type meta_estimate(meta_estimateSEXP);
-    Rcpp::traits::input_parameter< double const& >::type s_J(s_JSEXP);
-    rcpp_result_gen = Rcpp::wrap(poisson_profile_work_likeli(theta, meta_estimate, s_J));
-    return rcpp_result_gen;
-END_RCPP
-}
 // exponential_pl_mid_P
 arma::vec exponential_pl_mid_P(arma::vec const& theta, arma::vec const& theta_dag, arma::vec const& theta_MLE, int const& k, arma::vec const& J_ni, arma::vec const& n_i, int const& M);
-RcppExport SEXP _IMeta_exponential_pl_mid_P(SEXP thetaSEXP, SEXP theta_dagSEXP, SEXP theta_MLESEXP, SEXP kSEXP, SEXP J_niSEXP, SEXP n_iSEXP, SEXP MSEXP) {
+RcppExport SEXP _IMdac_exponential_pl_mid_P(SEXP thetaSEXP, SEXP theta_dagSEXP, SEXP theta_MLESEXP, SEXP kSEXP, SEXP J_niSEXP, SEXP n_iSEXP, SEXP MSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -268,86 +42,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// lognormal_pl_mid_P
-arma::vec lognormal_pl_mid_P(arma::mat const& theta, arma::mat const& theta_dag, arma::mat const& theta_MLE, int const& k, arma::field<arma::mat> const& J_ni, arma::vec const& n_i, int const& M);
-RcppExport SEXP _IMeta_lognormal_pl_mid_P(SEXP thetaSEXP, SEXP theta_dagSEXP, SEXP theta_MLESEXP, SEXP kSEXP, SEXP J_niSEXP, SEXP n_iSEXP, SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta_dag(theta_dagSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta_MLE(theta_MLESEXP);
-    Rcpp::traits::input_parameter< int const& >::type k(kSEXP);
-    Rcpp::traits::input_parameter< arma::field<arma::mat> const& >::type J_ni(J_niSEXP);
-    Rcpp::traits::input_parameter< arma::vec const& >::type n_i(n_iSEXP);
-    Rcpp::traits::input_parameter< int const& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(lognormal_pl_mid_P(theta, theta_dag, theta_MLE, k, J_ni, n_i, M));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logistic_pl_mid_P
-arma::vec logistic_pl_mid_P(arma::mat const& theta, arma::mat const& theta_dag, arma::mat const& theta_MLE, int const& k, arma::field<arma::mat> const& J_ni, arma::vec const& n_i, int const& M);
-RcppExport SEXP _IMeta_logistic_pl_mid_P(SEXP thetaSEXP, SEXP theta_dagSEXP, SEXP theta_MLESEXP, SEXP kSEXP, SEXP J_niSEXP, SEXP n_iSEXP, SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta_dag(theta_dagSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta_MLE(theta_MLESEXP);
-    Rcpp::traits::input_parameter< int const& >::type k(kSEXP);
-    Rcpp::traits::input_parameter< arma::field<arma::mat> const& >::type J_ni(J_niSEXP);
-    Rcpp::traits::input_parameter< arma::vec const& >::type n_i(n_iSEXP);
-    Rcpp::traits::input_parameter< int const& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(logistic_pl_mid_P(theta, theta_dag, theta_MLE, k, J_ni, n_i, M));
-    return rcpp_result_gen;
-END_RCPP
-}
-// poisson_pl_mid_profile_P
-arma::vec poisson_pl_mid_profile_P(arma::vec const& theta, arma::mat const& theta_dag, double const& meta_estimate, int const& k, double const& s_J, arma::vec const& n_i, int const& q, int const& M);
-RcppExport SEXP _IMeta_poisson_pl_mid_profile_P(SEXP thetaSEXP, SEXP theta_dagSEXP, SEXP meta_estimateSEXP, SEXP kSEXP, SEXP s_JSEXP, SEXP n_iSEXP, SEXP qSEXP, SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec const& >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< arma::mat const& >::type theta_dag(theta_dagSEXP);
-    Rcpp::traits::input_parameter< double const& >::type meta_estimate(meta_estimateSEXP);
-    Rcpp::traits::input_parameter< int const& >::type k(kSEXP);
-    Rcpp::traits::input_parameter< double const& >::type s_J(s_JSEXP);
-    Rcpp::traits::input_parameter< arma::vec const& >::type n_i(n_iSEXP);
-    Rcpp::traits::input_parameter< int const& >::type q(qSEXP);
-    Rcpp::traits::input_parameter< int const& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(poisson_pl_mid_profile_P(theta, theta_dag, meta_estimate, k, s_J, n_i, q, M));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_IMeta_lognormal_MLE", (DL_FUNC) &_IMeta_lognormal_MLE, 1},
-    {"_IMeta_lognormal_FI", (DL_FUNC) &_IMeta_lognormal_FI, 3},
-    {"_IMeta_pareto_QF", (DL_FUNC) &_IMeta_pareto_QF, 2},
-    {"_IMeta_logdlnorm", (DL_FUNC) &_IMeta_logdlnorm, 3},
-    {"_IMeta_logdbinom", (DL_FUNC) &_IMeta_logdbinom, 2},
-    {"_IMeta_logdpois", (DL_FUNC) &_IMeta_logdpois, 2},
-    {"_IMeta_lognormal_individual_IM", (DL_FUNC) &_IMeta_lognormal_individual_IM, 5},
-    {"_IMeta_pareto_individual_IM", (DL_FUNC) &_IMeta_pareto_individual_IM, 3},
-    {"_IMeta_logistic_individual_IM", (DL_FUNC) &_IMeta_logistic_individual_IM, 3},
-    {"_IMeta_poisson_individual_IM", (DL_FUNC) &_IMeta_poisson_individual_IM, 3},
-    {"_IMeta_valid_lognormal_individual_IM", (DL_FUNC) &_IMeta_valid_lognormal_individual_IM, 4},
-    {"_IMeta_valid_pareto_individual_IM", (DL_FUNC) &_IMeta_valid_pareto_individual_IM, 4},
-    {"_IMeta_exponential_work_likeli", (DL_FUNC) &_IMeta_exponential_work_likeli, 4},
-    {"_IMeta_lognormal_work_likeli", (DL_FUNC) &_IMeta_lognormal_work_likeli, 4},
-    {"_IMeta_pareto_work_likeli", (DL_FUNC) &_IMeta_pareto_work_likeli, 4},
-    {"_IMeta_logistic_work_likeli", (DL_FUNC) &_IMeta_logistic_work_likeli, 5},
-    {"_IMeta_poisson_work_likeli", (DL_FUNC) &_IMeta_poisson_work_likeli, 5},
-    {"_IMeta_poisson_profile_work_likeli", (DL_FUNC) &_IMeta_poisson_profile_work_likeli, 3},
-    {"_IMeta_exponential_pl_mid_P", (DL_FUNC) &_IMeta_exponential_pl_mid_P, 7},
-    {"_IMeta_lognormal_pl_mid_P", (DL_FUNC) &_IMeta_lognormal_pl_mid_P, 7},
-    {"_IMeta_logistic_pl_mid_P", (DL_FUNC) &_IMeta_logistic_pl_mid_P, 7},
-    {"_IMeta_poisson_pl_mid_profile_P", (DL_FUNC) &_IMeta_poisson_pl_mid_profile_P, 8},
+    {"_IMdac_exponential_work_likeli", (DL_FUNC) &_IMdac_exponential_work_likeli, 4},
+    {"_IMdac_exponential_pl_mid_P", (DL_FUNC) &_IMdac_exponential_pl_mid_P, 7},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_IMeta(DllInfo *dll) {
+RcppExport void R_init_IMdac(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
