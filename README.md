@@ -1,12 +1,9 @@
 # About
-Possibilistic divide-and-conquer analysis with finite-sample validity guarantees
+Divide-and-conquer with finite sample sizes: valid and efficient possibilistic inference
 
-This is a repository for the R package to perform possibilistic divide-and-conquer analysis in the inferential models framework. The R package's main files are:
+This is a repository for the R package to perform possibilistic divide-and-conquer analysis in the inferential models framework. The R package's main file is the R/dac_funcs-20250221.R file. It defines the function for the divide-and-conquer possibility contour and helper functions.
 
-- src/compute_funcs.cpp: this file defines the Rcpp functions that compute the possibility contours for the individual, optimal, divide-and-conquer analysis and equilibrated possibility contours.
-- R/meta_analysis_funcs.R: this file defines the function for the divide-and-conquer analysis possibility contour and helper functions.
-
-The IMdac man file contains a examples for running the models from the paper.
+The IMdac man file and the examples folder contain examples for running the models from the paper.
 
 Please email ehector@ncsu.edu with any questions or bug-reports.
 
@@ -22,12 +19,10 @@ Please make sure to have all packages listed in the DESCRIPTION file already ins
 
 # Citation
 
-If you use the IMdac R package, please consider citing the relevant manuscript: E.C. Hector, L. Cella and R. Martin (2025+). 
+If you use the IMdac R package, please consider citing the relevant manuscript: E.C. Hector, L. Cella and R. Martin (2025+). Divide-and-conquer with finite sample sizes: valid and efficient possibilistic inference.
 
 # References
 
-G.V. Glass. (1976). Primary, secondary, and meta-analysis of research. Educational Researcher, 5(10):3–8.
-
-E.C. Hector, L. Tang, L. Zhou, and P.X.-K. Song (2024). Handbook on Bayesian, Fiducial and Frequentist Inference, Chapter "Data integration and fusion in the Bayesian and Frequentist frameworks." Chapman and Hall/CRC Press.
+Hector, E. C., Tang, L., Zhou, L., and Song, P. X.-K. (2024). Handbook on Bayesian, Fiducial and Frequentist Inference, chapter Data integration and fusion in the Bayesian and Frequentist frameworks. Chapman and Hall/CRC Press.
 
 R. Martin and C. Liu. (2015). Inferential models: reasoning with uncertainty. CRC Press.
