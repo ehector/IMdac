@@ -5,7 +5,7 @@ This is a repository for the R package to perform possibilistic divide-and-conqu
 
 The IMdac man file contains examples for running the Gaussian and Exponential models from the paper. The examples folder contains the code to reproduce the alpha-stable and g-and-k examples. Due to the use of Bayesflow, some set-up of Python is needed that is system specific. Instructions are available in the comments at the top of the two scripts: "alpha-stable.R" and "g-and-k.R".
 
-Please email ehector@ncsu.edu with any questions or bug-reports.
+Please email ehector@umich.edu with any questions or bug-reports.
 
 # Installation
 
